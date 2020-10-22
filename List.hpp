@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:12:50 by trbonnes          #+#    #+#             */
-/*   Updated: 2020/10/22 13:26:39 by trbonnes         ###   ########.fr       */
+/*   Updated: 2020/10/22 13:40:02 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,8 +177,8 @@ namespace ft {
 		typedef const T *const_pointer;
 		typedef ListIterator<T> iterator;
 		typedef const ListIterator<const T> const_iterator;
-		typedef ListIterator<T> reverse_iterator;
-		typedef const ListIterator<const T> const_reverse_iterator;
+		typedef ReverseListIterator<T> reverse_iterator;
+		typedef const ReverseListIterator<const T> const_reverse_iterator;
 		typedef std::ptrdiff_t difference_type;
 		typedef size_t size_type;
 
@@ -194,17 +194,30 @@ namespace ft {
 			_node(_node *prev_, _node *next_): prev(prev_), next(next_) {}; 
 		};
 		
-
 		size_type _size;
 		_node *_first;
 		_node *_last;
 		
 	public:
-		List(): _size(0), _first(new _node(NULL, NULL), _last(_first)) {}
-		List(size_type n, const value_type &val) {}
+		List(): _size(0) {
+			_first = new _node(NULL, NULL);
+			_last = _first;
+		}
+
+		List(size_type n, const value_type &val): _len(0) {
+			_first = new _node(NULL, NULL);
+			_last = _first;
+
+			insert(begin(), n, val);
+		}
+
 		template <typename InputIterator>
-		List(InputIterator first, InputIterator last) {}
-		List(const List &c): _len(c._len) {}
+		List(InputIterator first, InputIterator last) {
+		}
+
+		List(const List &c): _len(c._len) {
+		}
+
 		~List() {
 			delete _last;
 		}
@@ -217,6 +230,22 @@ namespace ft {
 		
 		_Self &operator=(const List &c) {
 			return *this;
+		}
+
+		iterator begin() {
+			return iterator(_first);
+		}
+
+		iterator end() {
+			return iterator(_last);
+		}
+
+		reverse_iterator rbegin() {
+			return reverse_iterator(_last);
+		}
+
+		reverse_iterator rend() {
+			return reverse_iterator(_first);
 		}
 	}; //List
 
