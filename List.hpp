@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:12:50 by trbonnes          #+#    #+#             */
-/*   Updated: 2020/10/22 11:43:45 by trbonnes         ###   ########.fr       */
+/*   Updated: 2020/10/22 12:27:22 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,23 +17,49 @@ namespace ft {
 
 	template <typename T>
 	class	ListIterator {
-	private:
-		;
 	public:
-		ListIterator::ListIterator() {
+		typedef T value_type;
+		typedef T *pointer;
+		typedef T &reference;
+		typedef	std::ptrdiff_t difference_type;
+		typedef std::bidirectional_iterator_tag iterator_category;
+		
+	private:
+		typedef typename List<T>::_node _node;
 
-		}
+		_node *_n;
 
-		ListIterator::ListIterator(const ListIterator &c) {
+	public:
+		ListIterator() {}
+		ListIterator(_node *node): _n(node) {}
+		ListIterator(const ListIterator &c): _n(c._n) {}
+		~ListIterator() {}
 
-		}
-
-		ListIterator::ListIterator::~ListIterator() {
-
-		}
-
-		ListIterator &ListIterator::operator=(const ListIterator &c) {
+		_Self &operator=(const ListIterator &c) {
+			_n = c._n;
 			return *this;
+		}
+
+		_Self &operator++() {
+			_n = _n->next;
+			return *this;
+		}
+
+		_Self &operator++(int) {
+			_Self cpy = *this;
+			++*this;
+			return cpy;
+		}
+
+		_Self &operator--() {
+			_n = _n->prev;
+			return *this;
+		}
+
+		_Self &operator--(int) {
+			_Self cpy = *this;
+			--*this;
+			return cpy;
 		}
 };
 
@@ -53,10 +79,11 @@ namespace ft {
 		typedef size_t size_type;
 
 	private:
+		typedef ListIterator<T> _Self;
 		typedef List<T> _Self;
 
 		struct _node {
-			T data;
+			value_type data;
 
 			_node *prev;
 			_node *next;
@@ -70,19 +97,16 @@ namespace ft {
 		_node *_last;
 		
 	public:
-		List::List() {
-
+		List(): _size(0), _first(new _node(NULL, NULL), _last(_first)) {}
+		List(size_type n, const value_type &val) {}
+		template <typename InputIterator>
+		List(InputIterator first, InputIterator last) {}
+		List(const List &c): _len(c._len) {}
+		~List() {
+			delete _last;
 		}
 
-		List::List(const List &c) {
-
-		}
-		
-		List::~List() {
-
-		}
-
-		List &List::operator=(const List &c) {
+		_Self &operator=(const List &c) {
 			return *this;
 		}
 	};
