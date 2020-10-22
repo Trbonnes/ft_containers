@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:12:50 by trbonnes          #+#    #+#             */
-/*   Updated: 2020/10/22 12:27:22 by trbonnes         ###   ########.fr       */
+/*   Updated: 2020/10/22 13:26:39 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,16 +26,26 @@ namespace ft {
 		
 	private:
 		typedef typename List<T>::_node _node;
+		typedef ListIterator<T> _Self;
 
 		_node *_n;
 
 	public:
 		ListIterator() {}
 		ListIterator(_node *node): _n(node) {}
-		ListIterator(const ListIterator &c): _n(c._n) {}
+		ListIterator(const ListIterator<T> &c): _n(c._n) {}
 		~ListIterator() {}
 
-		_Self &operator=(const ListIterator &c) {
+		template <typename T>
+		friend class List;
+
+		template <typename T>
+		friend bool operator==(const ListIterator<T> &lhs, ListIterator<T> &rhs);
+
+		template <typename T>
+		friend bool operator!=(const ListIterator<T> &lhs, ListIterator<T> &rhs);
+
+		_Self &operator=(const _Self &c) {
 			_n = c._n;
 			return *this;
 		}
@@ -61,7 +71,101 @@ namespace ft {
 			--*this;
 			return cpy;
 		}
-};
+
+		_Self &operator*() {
+			return _n->data;
+		}
+
+		_Self &operator->() {
+			return &_n->data;
+		}
+	}; //ListIterator
+
+	template <typename T>
+	bool operator==(const ListIterator<T> &lhs, ListIterator<T> &rhs) {
+		return lhs._n == rhs._n;
+	}
+
+	template <typename T>
+	bool operator!=(const ListIterator<T> &lhs, ListIterator<T> &rhs) {
+		return !(lhs._n == rhs._n);
+	}
+
+	template <typename T>
+	class	ReverseListIterator {
+	public:
+		typedef T value_type;
+		typedef T *pointer;
+		typedef T &reference;
+		typedef	std::ptrdiff_t difference_type;
+		typedef std::bidirectional_iterator_tag iterator_category;
+		
+	private:
+		typedef typename List<T>::_node _node;
+		typedef ReverseListIterator<T> _Self;
+
+		_node *_n;
+
+	public:
+		ReverseListIterator() {}
+		ReverseListIterator(_node *node): _n(node) {}
+		ReverseListIterator(const ReverseListIterator<T> &c): _n(c._n) {}
+		~ReverseListIterator() {}
+
+		template <typename T>
+		friend class List;
+
+		template <typename T>
+		friend bool operator==(const ReverseListIterator<T> &lhs, ReverseListIterator<T> &rhs);
+
+		template <typename T>
+		friend bool operator!=(const ReverseListIterator<T> &lhs, ReverseListIterator<T> &rhs);
+
+		_Self &operator=(const _Self &c) {
+			_n = c._n;
+			return *this;
+		}
+
+		_Self &operator++() {
+			_n = _n->prev;
+			return *this;
+		}
+
+		_Self &operator++(int) {
+			_Self cpy = *this;
+			--*this;
+			return cpy;
+		}
+
+		_Self &operator--() {
+			_n = _n->next;
+			return *this;
+		}
+
+		_Self &operator--(int) {
+			_Self cpy = *this;
+			++*this;
+			return cpy;
+		}
+
+		_Self &operator*() {
+			return _n->data;
+		}
+
+		_Self &operator->() {
+			return &_n->data;
+		}
+	}; //ReverseListIterator
+
+	template <typename T>
+	bool operator==(const ReverseListIterator<T> &lhs, ReverseListIterator<T> &rhs) {
+		return lhs._n == rhs._n;
+	}
+
+	template <typename T>
+	bool operator!=(const ReverseListIterator<T> &lhs, ReverseListIterator<T> &rhs) {
+		return !(lhs._n == rhs._n);
+	}
 
 	template <typename T>
 	class	List {
@@ -79,7 +183,6 @@ namespace ft {
 		typedef size_t size_type;
 
 	private:
-		typedef ListIterator<T> _Self;
 		typedef List<T> _Self;
 
 		struct _node {
@@ -106,11 +209,17 @@ namespace ft {
 			delete _last;
 		}
 
+		template <typename T>
+		friend class ListIterator<T>;
+
+		template <typename T>
+		friend class ReverseListIterator<T>;
+		
 		_Self &operator=(const List &c) {
 			return *this;
 		}
-	};
+	}; //List
 
-}
+}; //namespace
 
 #endif
