@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:12:50 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/07 15:05:40 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/07 17:55:58 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -297,6 +297,7 @@ namespace ft {
 		}
 
 		//modifiers
+		
 		template<class InputIterator>
 		void assign(InputIterator first, InputIterator last) {
 			clear();
@@ -428,6 +429,129 @@ namespace ft {
 
 		void clear() {
 			erase(begin(), end());
+		}
+
+		//operations
+
+		void splice(iterator position, List &x) {
+			splice(position, x, x.begin(), x.end())
+		}
+
+		void splice(iterator position, List &x, iterator i) {
+			_node *leftNode = position._n->prev;
+			_node *rightNode = position._n;
+
+			_node *x_leftNode = i._n->prev;
+			_node *x_rightNode = i._n->next;
+
+			if (leftNode) {
+				leftNode->next = i._n;
+				i._n->prev = leftNode;
+			}
+			else {
+				_first = i._n;
+				i._n->prev = NULL;
+			}
+			i._n->next = rightNode;
+
+			if (x_leftNode)
+				x_leftNode->next = rightNode;
+			else
+				x._first = rightNode;
+			x_rightNode->prev = leftNode;
+
+			_size++;
+			x._size--;
+		}
+
+		void splice(iterator position, List &x, iterator first, iterator last) {
+			while (first != last) {
+				iterator it = first;
+				first++;
+				splice(position, x, it);
+			}
+		}
+
+		void remove(const value_type &val) {
+			for (iterator it = begin(); it != end();) {
+				if (*it == val)
+					it = erase(it);
+				else
+					it++;
+			}
+		}
+
+		template <typename Predicate>
+		void remove_if(Predicate pred) {
+			for (iterator it = begin(); it != end();) {
+				if (pred(*it))
+					it = erase(it);
+				else
+					it++;
+			}
+		}
+
+		void unique() {
+			unique(std::equal);
+		}
+
+		template <typename BinaryPredicate>
+		void unique(BinaryPredicate binary_pred) {
+
+			if (begin() == end())
+				return ;
+			
+			iterator prev = begin();
+			iterator it = prev;
+			it++
+			while (it != end()) {
+				if (binary_pred(*it, *prev))
+					it = erase(it);
+				else {
+					prev = it;
+					it++;
+				}
+			}
+		}
+
+		void merge(List &x) {
+			merge(x, std::less);
+		}
+
+		template <typename Compare>
+		void merge(List &x, Compare comp) {
+			iterator selfIt = begin();
+
+			for (iterator it = x.begin(); it != x.end();) {
+				while(selfIt != end() && comp(*SelfIt, *it))
+					selfIt++;
+				
+				iterator tmp = it;
+				it++;
+
+				if (selfIt._n->prev)
+					selfIt._n->prev->next = tmp._n;
+				else
+					_first = tmp._n;
+				
+				tmp._n->prev = selfIt._n->prev;
+				tmp._n->next = selfIt._n;
+				selfIt._n->prev = tmp._n;
+			}
+
+			_size += x._size;
+			x._size = 0;
+			x._first = x._last;
+			x._last->prev = NULL;
+		}
+
+		void sort() {
+			sort(std::less);
+		}
+
+		template <typename Compare>
+		void sort(Compare comp) {
+			iterator selfIt = begin();
 		}
 
 	}; //List
