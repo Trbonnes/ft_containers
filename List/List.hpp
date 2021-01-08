@@ -6,14 +6,19 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:12:50 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/08 11:30:04 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/08 14:53:10 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIST_HPP
 # define LIST_HPP
 
+# include <utility>
+
 namespace ft {
+
+	template <typename T>
+	class List;
 
 	template <typename T>
 	class	ListIterator {
@@ -36,14 +41,14 @@ namespace ft {
 		ListIterator(const ListIterator<T> &c): _n(c._n) {}
 		~ListIterator() {}
 
-		template <typename T>
+		template <typename _T>
 		friend class List;
 
-		template <typename T>
-		friend bool operator==(const ListIterator<T> &lhs, ListIterator<T> &rhs);
+		template <typename _T>
+		friend bool operator==(const ListIterator<_T> &lhs, ListIterator<_T> &rhs);
 
-		template <typename T>
-		friend bool operator!=(const ListIterator<T> &lhs, ListIterator<T> &rhs);
+		template <typename _T>
+		friend bool operator!=(const ListIterator<_T> &lhs, ListIterator<_T> &rhs);
 
 		_Self &operator=(const _Self &c) {
 			_n = c._n;
@@ -55,7 +60,7 @@ namespace ft {
 			return *this;
 		}
 
-		_Self &operator++(int) {
+		_Self operator++(int) {
 			_Self cpy = *this;
 			++*this;
 			return cpy;
@@ -66,17 +71,17 @@ namespace ft {
 			return *this;
 		}
 
-		_Self &operator--(int) {
+		_Self operator--(int) {
 			_Self cpy = *this;
 			--*this;
 			return cpy;
 		}
 
-		_Self &operator*() {
+		reference operator*() const {
 			return _n->data;
 		}
 
-		_Self &operator->() {
+		pointer operator->() const {
 			return &_n->data;
 		}
 	}; //ListIterator
@@ -112,14 +117,14 @@ namespace ft {
 		ReverseListIterator(const ReverseListIterator<T> &c): _n(c._n) {}
 		~ReverseListIterator() {}
 
-		template <typename T>
+		template <typename _T>
 		friend class List;
 
-		template <typename T>
-		friend bool operator==(const ReverseListIterator<T> &lhs, ReverseListIterator<T> &rhs);
+		template <typename _T>
+		friend bool operator==(const ReverseListIterator<_T> &lhs, ReverseListIterator<_T> &rhs);
 
-		template <typename T>
-		friend bool operator!=(const ReverseListIterator<T> &lhs, ReverseListIterator<T> &rhs);
+		template <typename _T>
+		friend bool operator!=(const ReverseListIterator<_T> &lhs, ReverseListIterator<_T> &rhs);
 
 		_Self &operator=(const _Self &c) {
 			_n = c._n;
@@ -131,7 +136,7 @@ namespace ft {
 			return *this;
 		}
 
-		_Self &operator++(int) {
+		_Self operator++(int) {
 			_Self cpy = *this;
 			--*this;
 			return cpy;
@@ -142,17 +147,17 @@ namespace ft {
 			return *this;
 		}
 
-		_Self &operator--(int) {
+		_Self operator--(int) {
 			_Self cpy = *this;
 			++*this;
 			return cpy;
 		}
 
-		_Self &operator*() {
+		reference operator*() const {
 			return _n->data;
 		}
 
-		_Self &operator->() {
+		pointer operator->() const {
 			return &_n->data;
 		}
 	}; //ReverseListIterator
@@ -207,7 +212,7 @@ namespace ft {
 			_last = _first;
 		}
 
-		List(size_type n, const value_type &val): _len(0) {
+		List(size_type n, const value_type &val): _size(0) {
 			_first = new _node(NULL, NULL); //Sentinel
 			_last = _first;
 
@@ -219,14 +224,14 @@ namespace ft {
 			_first = new _node(NULL, NULL); //Sentinel
 			_last = _first;
 
-			insert(first, last);
+			insert(begin(), first, last);
 		}
 
-		List(const List &c): _len(c._len) {
+		List(const List &c): _size(0) {
 			_first = new _node(NULL, NULL); //Sentinel
 			_last = _first;
 
-			insert(begin(), c.begin(), c.end())
+			insert(begin(), c.begin(), c.end());
 		}
 
 		//destructor
@@ -236,15 +241,17 @@ namespace ft {
 			delete _last;
 		}
 
-		template <typename T>
-		friend class ListIterator<T>;
+		template <typename _T>
+		friend class ListIterator;
 
-		template <typename T>
-		friend class ReverseListIterator<T>;
+		template <typename _T>
+		friend class ReverseListIterator;
 		
 		//operators and iterators
 
 		_Self &operator=(const List &c) {
+			clear();
+			insert(begin(), c.begin(), c.end());
 			return *this;
 		}
 
@@ -369,7 +376,7 @@ namespace ft {
 			_node *leftNode = position._n->prev;
 			_node *rightNode = position._n;
 			
-			_node *insert = leftNode
+			_node *insert = leftNode;
 			for (InputIterator it = first; it != last; it++) {
 				_node *n = new _node(insert, NULL);
 				n->data = *it;
@@ -398,7 +405,7 @@ namespace ft {
 			iterator ret = position._n->next;
 
 			_size--;
-			delete position;
+			delete position._n;
 			return ret;
 		}
 
@@ -434,7 +441,7 @@ namespace ft {
 		//operations
 
 		void splice(iterator position, List &x) {
-			splice(position, x, x.begin(), x.end())
+			splice(position, x, x.begin(), x.end());
 		}
 
 		void splice(iterator position, List &x, iterator i) {
@@ -503,7 +510,7 @@ namespace ft {
 			
 			iterator prev = begin();
 			iterator it = prev;
-			it++
+			it++;
 			while (it != end()) {
 				if (binary_pred(*it, *prev))
 					it = erase(it);
@@ -515,7 +522,7 @@ namespace ft {
 		}
 
 		void merge(List &x) {
-			merge(x, std::less);
+			merge(x, std::less<T>());
 		}
 
 		template <typename Compare>
@@ -523,7 +530,7 @@ namespace ft {
 			iterator selfIt = begin();
 
 			for (iterator it = x.begin(); it != x.end();) {
-				while(selfIt != end() && comp(*SelfIt, *it))
+				while(selfIt != end() && comp(*selfIt, *it))
 					selfIt++;
 				
 				iterator tmp = it;
@@ -546,7 +553,7 @@ namespace ft {
 		}
 
 		void sort() {
-			sort(std::less);
+			sort(std::less<T>());
 		}
 
 		template <typename Compare>
@@ -567,7 +574,7 @@ namespace ft {
 						compIt._n->prev->next = compIt._n->next;
 					}
 					else {
-						_first = compIt._n->next
+						_first = compIt._n->next;
 					}
 					compIt._n->next = it._n;
 					compIt._n->prev = it._n->prev;
@@ -602,10 +609,10 @@ namespace ft {
 				rtmp._n->next = tmp._n->next;
 				tmp._n->next->prev = rtmp._n;
 
-				tmp._n->next = rnext._n;
-				tmp._n->prev = rprev._n;
-				rnext._n->prev = tmp._n;
-				rprev._n->next = tmp._n;
+				tmp._n->next = rnext;
+				tmp._n->prev = rprev;
+				rnext->prev = tmp._n;
+				rprev->next = tmp._n;
 			}
 		}
 
@@ -650,7 +657,7 @@ namespace ft {
 	}
 
 	template <typename T>
-	void swap (list<T> &x, list<T> &y) {
+	void swap (List<T> &x, List<T> &y) {
 		return x.swap(y);
 	}
 

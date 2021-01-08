@@ -2,7 +2,7 @@
 CXX = clang++
 CXXFLAGS = -Wall -Wextra -Werror -g3 -fsanitize=address
 
-SRCS = $(wildcard *.cpp)
+SRCS = $(wildcard */*.cpp)
 OBJECTS = $(subst .cpp,.o,$(SRCS))
 
 NAME = ft_containers
