@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:12:50 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/07 17:55:58 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/08 11:30:04 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -551,10 +551,108 @@ namespace ft {
 
 		template <typename Compare>
 		void sort(Compare comp) {
-			iterator selfIt = begin();
+			iterator saveIt = begin();
+			iterator it = saveIt;
+			it++;
+			iterator compIt;
+
+			while (compIt != end()) {
+				it = begin();
+				while (it != end() && comp(*it, *compIt))
+					it++;
+
+				if (it._n->prev != compIt._n) {
+
+					if (compIt._n->prev) {
+						compIt._n->prev->next = compIt._n->next;
+					}
+					else {
+						_first = compIt._n->next
+					}
+					compIt._n->next = it._n;
+					compIt._n->prev = it._n->prev;
+					it._n->prev->next = compIt._n;
+					it._n->prev = compIt._n;
+
+					compIt = begin();
+				}
+				else
+					compIt++;
+			}
+		}
+
+		void reverse() {
+			iterator it = begin();
+			reverse_iterator rit = rbegin();
+			rit++;
+
+			while (it != rit) {
+				iterator tmp = it;
+				reverse_iterator rtmp = rit;
+				_node *rprev = rtmp._n->prev;
+				_node *rnext = rtmp._n->next;
+				it++;
+				rit++;
+
+				if (tmp._n->prev)
+					tmp._n->prev->next = rtmp._n;
+				else
+					_first = rtmp._n;
+				rtmp._n->prev = tmp._n->prev;
+				rtmp._n->next = tmp._n->next;
+				tmp._n->next->prev = rtmp._n;
+
+				tmp._n->next = rnext._n;
+				tmp._n->prev = rprev._n;
+				rnext._n->prev = tmp._n;
+				rprev._n->next = tmp._n;
+			}
 		}
 
 	}; //List
+
+	//Non-member function overloads
+
+	template <typename T>
+	bool operator==(const List<T> &lhs, const List<T> &rhs) {
+		if (lhs.size() != rhs.size())
+			return false;
+		return std::equal(lhs.begin(), lhs.end(), rhs.begin());
+	}
+
+	template <typename T>
+	bool operator!= (const List<T> &lhs, const List<T> &rhs) {
+		return !(lhs == rhs);
+	}
+
+
+	template <typename T>
+	bool operator<(const List<T> &lhs, const List<T> &rhs) {
+		return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+	}
+
+
+	template <typename T>
+	bool operator<=(const List<T> &lhs, const List<T> &rhs) {
+		return !(rhs < lhs);
+	}
+
+
+	template <typename T>
+	bool operator>(const List<T> &lhs, const List<T> &rhs) {
+		return rhs < lhs;
+	}
+
+
+	template <typename T>
+	bool operator>=(const List<T> &lhs, const List<T> &rhs) {
+		return !(lhs < rhs);
+	}
+
+	template <typename T>
+	void swap (list<T> &x, list<T> &y) {
+		return x.swap(y);
+	}
 
 }; //namespace
 
