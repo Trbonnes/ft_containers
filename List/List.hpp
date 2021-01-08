@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:12:50 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/08 14:53:10 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/08 15:54:43 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define LIST_HPP
 
 # include <utility>
+# include "../ReverseIterator.hpp"
 
 namespace ft {
 
@@ -97,82 +98,6 @@ namespace ft {
 	}
 
 	template <typename T>
-	class	ReverseListIterator {
-	public:
-		typedef T value_type;
-		typedef T *pointer;
-		typedef T &reference;
-		typedef	std::ptrdiff_t difference_type;
-		typedef std::bidirectional_iterator_tag iterator_category;
-		
-	private:
-		typedef typename List<T>::_node _node;
-		typedef ReverseListIterator<T> _Self;
-
-		_node *_n;
-
-	public:
-		ReverseListIterator() {}
-		ReverseListIterator(_node *node): _n(node) {}
-		ReverseListIterator(const ReverseListIterator<T> &c): _n(c._n) {}
-		~ReverseListIterator() {}
-
-		template <typename _T>
-		friend class List;
-
-		template <typename _T>
-		friend bool operator==(const ReverseListIterator<_T> &lhs, ReverseListIterator<_T> &rhs);
-
-		template <typename _T>
-		friend bool operator!=(const ReverseListIterator<_T> &lhs, ReverseListIterator<_T> &rhs);
-
-		_Self &operator=(const _Self &c) {
-			_n = c._n;
-			return *this;
-		}
-
-		_Self &operator++() {
-			_n = _n->prev;
-			return *this;
-		}
-
-		_Self operator++(int) {
-			_Self cpy = *this;
-			--*this;
-			return cpy;
-		}
-
-		_Self &operator--() {
-			_n = _n->next;
-			return *this;
-		}
-
-		_Self operator--(int) {
-			_Self cpy = *this;
-			++*this;
-			return cpy;
-		}
-
-		reference operator*() const {
-			return _n->data;
-		}
-
-		pointer operator->() const {
-			return &_n->data;
-		}
-	}; //ReverseListIterator
-
-	template <typename T>
-	bool operator==(const ReverseListIterator<T> &lhs, ReverseListIterator<T> &rhs) {
-		return lhs._n == rhs._n;
-	}
-
-	template <typename T>
-	bool operator!=(const ReverseListIterator<T> &lhs, ReverseListIterator<T> &rhs) {
-		return !(lhs._n == rhs._n);
-	}
-
-	template <typename T>
 	class	List {
 	public:
 		typedef T value_type;
@@ -182,8 +107,8 @@ namespace ft {
 		typedef const T *const_pointer;
 		typedef ListIterator<T> iterator;
 		typedef const ListIterator<const T> const_iterator;
-		typedef ReverseListIterator<T> reverse_iterator;
-		typedef const ReverseListIterator<const T> const_reverse_iterator;
+		typedef ReverseIterator<iterator> reverse_iterator;
+		typedef const ReverseIterator<const_iterator> const_reverse_iterator;
 		typedef std::ptrdiff_t difference_type;
 		typedef size_t size_type;
 
@@ -244,8 +169,8 @@ namespace ft {
 		template <typename _T>
 		friend class ListIterator;
 
-		template <typename _T>
-		friend class ReverseListIterator;
+		template <typename Iterator>
+		friend class ReverseIterator;
 		
 		//operators and iterators
 
@@ -264,11 +189,11 @@ namespace ft {
 		}
 
 		reverse_iterator rbegin() {
-			return reverse_iterator(_last);
+			return reverse_iterator(end());
 		}
 
 		reverse_iterator rend() {
-			return reverse_iterator(_first);
+			return reverse_iterator(begin());
 		}
 
 		//capacity

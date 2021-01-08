@@ -6,12 +6,14 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/08 14:51:34 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/08 15:22:17 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/08 15:45:57 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REVERSEITERATOR_HPP
 # define REVERSEITERATOR_HPP
+
+# include <cstddef>
 
 namespace ft {
 
@@ -19,22 +21,22 @@ namespace ft {
 	class	ReverseIterator {
 	public:
 		typedef Iterator iterator_type;
-		typedef typename IteratorTraits<Iterator>::iterator_category iterator_category;
-		typedef typename IteratorTraits<Iterator>::value_type value_type;
-		typedef typename IteratorTraits<Iterator>::difference_type difference_type;
-		typedef typename IteratorTraits<Iterator>::pointer pointer;
-		typedef typename IteratorTraits<Iterator>::reference reference;
+		typedef typename std::iterator_traits<Iterator>::iterator_category iterator_category;
+		typedef typename std::iterator_traits<Iterator>::value_type value_type;
+		typedef typename std::iterator_traits<Iterator>::difference_type difference_type;
+		typedef typename std::iterator_traits<Iterator>::pointer pointer;
+		typedef typename std::iterator_traits<Iterator>::reference reference;
 		
 	private:
 		typedef ReverseIterator<Iterator> _Self;
 
         Iterator _base;
 
-        ReverseIterator();
 
 	public:
+        ReverseIterator() {}
 		ReverseIterator(Iterator base): _base(base) {}
-		ReverseIterator(const ReverseIterator<T> &c): _base(c._base) {}
+		ReverseIterator(const ReverseIterator<Iterator> &c): _base(c._base) {}
 		~ReverseIterator() {}
 
         iterator_type base() const {

@@ -15,10 +15,10 @@ void    test_iterator() {
     lst.push_front(0);
     lst.push_front(999);
 
-    ft::ListIterator<int> it;
-    ft::ListIterator<int> it2;
-    ft::ReverseListIterator<int> rit;
-    ft::ReverseListIterator<int> rit2;
+    ft::List<int>::iterator it;
+    ft::List<int>::iterator it2;
+    ft::List<int>::reverse_iterator rit;
+    ft::List<int>::reverse_iterator rit2;
 
     it = lst.begin();
     it2 = lst.end();
