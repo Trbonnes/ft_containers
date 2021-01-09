@@ -6,7 +6,7 @@
 #include "List.hpp"
 
 void    test_iterator() {
-    std::cout << "----------ITERATOR----------" << std::endl;
+    std::cout << "\e[0;34m----------ITERATOR----------" << std::endl;
 
     ft::List<int> lst;
     lst.push_front(111);
@@ -25,7 +25,7 @@ void    test_iterator() {
     rit = lst.rend();
     rit2 = lst.rbegin();
 
-    std::cout << "Enumeration" << std::endl;
+    std::cout << "\e[1;33mEnumeration" << std::endl;
     while (it != it2) {
         std::cout << *it << std::endl;
         it++;
