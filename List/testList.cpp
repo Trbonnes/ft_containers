@@ -33,7 +33,7 @@ void    test_iterator() {
     std::cout << "Reverse Enumeration" << std::endl;
     while (rit2 != rit) {
         std::cout << *rit2 << std::endl;
-        rit2--;
+		rit2++;
     }
 
     it = lst.begin();
@@ -42,9 +42,9 @@ void    test_iterator() {
     it--;
     std::cout << "end: " << *it << std::endl;
     rit = lst.rbegin();
-    rit++;
     std::cout << "rbegin: " << *rit << std::endl;
     rit = lst.rend();
+	rit--;
     std::cout << "rend: " << *rit << std::endl;
 }
 

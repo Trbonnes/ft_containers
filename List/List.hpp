@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   List.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:12:50 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/08 15:54:43 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/09 11:07:27 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define LIST_HPP
 
 # include <utility>
+# include <limits>
 # include "../ReverseIterator.hpp"
 
 namespace ft {
@@ -46,10 +47,10 @@ namespace ft {
 		friend class List;
 
 		template <typename _T>
-		friend bool operator==(const ListIterator<_T> &lhs, ListIterator<_T> &rhs);
+		friend bool operator==(const ListIterator<_T> &lhs, const ListIterator<_T> &rhs);
 
 		template <typename _T>
-		friend bool operator!=(const ListIterator<_T> &lhs, ListIterator<_T> &rhs);
+		friend bool operator!=(const ListIterator<_T> &lhs, const ListIterator<_T> &rhs);
 
 		_Self &operator=(const _Self &c) {
 			_n = c._n;
@@ -88,12 +89,12 @@ namespace ft {
 	}; //ListIterator
 
 	template <typename T>
-	bool operator==(const ListIterator<T> &lhs, ListIterator<T> &rhs) {
+	bool operator==(const ListIterator<T> &lhs, const ListIterator<T> &rhs) {
 		return lhs._n == rhs._n;
 	}
 
 	template <typename T>
-	bool operator!=(const ListIterator<T> &lhs, ListIterator<T> &rhs) {
+	bool operator!=(const ListIterator<T> &lhs, const ListIterator<T> &rhs) {
 		return !(lhs._n == rhs._n);
 	}
 
