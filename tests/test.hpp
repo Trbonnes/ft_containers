@@ -7,7 +7,9 @@
 # include <sstream>
 
 # include "../List/List.hpp"
+# include "../Vector/Vector.hpp"
 
 void testList();
+void testVector();
 
 #endif

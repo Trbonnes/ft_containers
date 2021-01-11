@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:12:50 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/11 13:21:51 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/11 16:57:06 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,6 +209,14 @@ namespace ft {
 
 		reverse_iterator rend() {
 			return reverse_iterator(begin());
+		}
+
+		const_reverse_iterator rbegin() const {
+			return const_reverse_iterator(end());
+		}
+
+		const_reverse_iterator rend() const {
+			return const_reverse_iterator(begin());
 		}
 
 		//capacity
@@ -569,7 +577,7 @@ namespace ft {
 
 	}; //List
 
-	//Non-member function overloads
+	//non-member function overloads
 
 	template <typename T>
 	bool operator==(const List<T> &lhs, const List<T> &rhs) {
@@ -583,24 +591,20 @@ namespace ft {
 		return !(lhs == rhs);
 	}
 
-
 	template <typename T>
 	bool operator<(const List<T> &lhs, const List<T> &rhs) {
 		return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
-
 
 	template <typename T>
 	bool operator<=(const List<T> &lhs, const List<T> &rhs) {
 		return !(rhs < lhs);
 	}
 
-
 	template <typename T>
 	bool operator>(const List<T> &lhs, const List<T> &rhs) {
 		return rhs < lhs;
 	}
-
 
 	template <typename T>
 	bool operator>=(const List<T> &lhs, const List<T> &rhs) {
