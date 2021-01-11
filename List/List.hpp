@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   List.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:12:50 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/09 11:07:27 by user42           ###   ########.fr       */
+/*   Updated: 2021/01/11 13:21:51 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <utility>
 # include <limits>
 # include "../ReverseIterator.hpp"
+# include "../utils.hpp"
 
 namespace ft {
 
@@ -153,7 +154,7 @@ namespace ft {
 			insert(begin(), first, last);
 		}
 
-		List(const List &c): _size(0) {
+		List(const _Self &c): _size(0) {
 			_first = new _node(NULL, NULL); //Sentinel
 			_last = _first;
 
@@ -167,6 +168,9 @@ namespace ft {
 			delete _last;
 		}
 
+		template <typename _T>
+		friend class List;
+		
 		template <typename _T>
 		friend class ListIterator;
 
@@ -187,6 +191,16 @@ namespace ft {
 
 		iterator end() {
 			return iterator(_last);
+		}
+
+		const_iterator begin() const {
+			typedef typename List<const T>::_node const_node;
+			return const_iterator(reinterpret_cast<const_node *>(_first));
+		}
+
+		const_iterator end() const {
+			typedef typename List<const T>::_node const_node;
+			return const_iterator(reinterpret_cast<const_node *>(_last));
 		}
 
 		reverse_iterator rbegin() {
@@ -231,7 +245,7 @@ namespace ft {
 
 		//modifiers
 		
-		template<class InputIterator>
+		template<typename InputIterator>
 		void assign(InputIterator first, InputIterator last) {
 			clear();
 			insert(begin(), first, last);
@@ -386,12 +400,13 @@ namespace ft {
 				i._n->prev = NULL;
 			}
 			i._n->next = rightNode;
+			rightNode->prev = i._n;
 
 			if (x_leftNode)
-				x_leftNode->next = rightNode;
+				x_leftNode->next = x_rightNode;
 			else
-				x._first = rightNode;
-			x_rightNode->prev = leftNode;
+				x._first = x_rightNode;
+			x_rightNode->prev = x_leftNode;
 
 			_size++;
 			x._size--;
@@ -425,7 +440,7 @@ namespace ft {
 		}
 
 		void unique() {
-			unique(std::equal);
+			unique(Equal<T>());
 		}
 
 		template <typename BinaryPredicate>
@@ -479,66 +494,76 @@ namespace ft {
 		}
 
 		void sort() {
-			sort(std::less<T>());
+			sort(Less<T>());
 		}
 
 		template <typename Compare>
 		void sort(Compare comp) {
-			iterator saveIt = begin();
-			iterator it = saveIt;
-			it++;
-			iterator compIt;
 
-			while (compIt != end()) {
-				it = begin();
-				while (it != end() && comp(*it, *compIt))
-					it++;
+			if (begin() == end())
+				return ;
 
-				if (it._n->prev != compIt._n) {
+			for (size_type i = 0; i < _size; i++) {
+				iterator cur = begin();
+				iterator nxt = cur;
+				nxt++;
 
-					if (compIt._n->prev) {
-						compIt._n->prev->next = compIt._n->next;
+				while (nxt != end()) {
+					if (!comp(*cur, *nxt)) {
+						_node *node_left = cur._n->prev;
+						_node *node_right = nxt._n->next;
+
+						cur._n->prev = nxt._n;
+						nxt._n->next = cur._n;
+						if (node_left)
+							node_left->next = nxt._n;
+						else
+							_first = nxt._n;
+						nxt._n->prev = node_left;
+						node_right->prev = cur._n;
+						cur._n->next = node_right;
+
+						nxt = cur;
+						nxt++;
 					}
 					else {
-						_first = compIt._n->next;
+						cur = nxt;
+						nxt++;
 					}
-					compIt._n->next = it._n;
-					compIt._n->prev = it._n->prev;
-					it._n->prev->next = compIt._n;
-					it._n->prev = compIt._n;
-
-					compIt = begin();
 				}
-				else
-					compIt++;
 			}
 		}
 
 		void reverse() {
-			iterator it = begin();
-			reverse_iterator rit = rbegin();
-			rit++;
+			size_t i = 1;
 
-			while (it != rit) {
+			iterator it = begin();
+			iterator it2 = end();
+			it2--;
+
+			while (it != it2 && i < _size / 2) {
+
 				iterator tmp = it;
-				reverse_iterator rtmp = rit;
-				_node *rprev = rtmp._n->prev;
-				_node *rnext = rtmp._n->next;
+				iterator tmp2 = it2;
+				_node *prv = tmp2._n->prev;
+				_node *nxt = tmp2._n->next;
 				it++;
-				rit++;
+				it2--;
 
 				if (tmp._n->prev)
-					tmp._n->prev->next = rtmp._n;
+					tmp._n->prev->next = tmp2._n;
 				else
-					_first = rtmp._n;
-				rtmp._n->prev = tmp._n->prev;
-				rtmp._n->next = tmp._n->next;
-				tmp._n->next->prev = rtmp._n;
+					_first = tmp2._n;
+				tmp2._n->prev = tmp._n->prev;
+				tmp2._n->next = tmp._n->next;
+				tmp._n->next->prev = tmp2._n;
 
-				tmp._n->next = rnext;
-				tmp._n->prev = rprev;
-				rnext->prev = tmp._n;
-				rprev->next = tmp._n;
+				tmp._n->next = nxt;
+				tmp._n->prev = prv;
+				nxt->prev = tmp._n;
+				prv->next = tmp._n;
+
+				i++;
 			}
 		}
 
