@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/11 13:37:35 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/11 16:58:32 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/11 17:51:15 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,9 @@ namespace ft {
 
 		template <typename _T>
 		friend bool operator!=(const VectorIterator<_T> &lhs, const VectorIterator<_T> &rhs);
+        
+        template <typename _T>
+	    friend ptrdiff_t operator-(const VectorIterator<_T> &lhs, const VectorIterator<_T> &rhs);
 
 		_Self &operator=(const _Self &c) {
 			_e = c._e;
@@ -92,11 +95,11 @@ namespace ft {
         }
 
 		reference operator*() const {
-			return _e;
+			return *_e;
 		}
 
 		pointer operator->() const {
-			return &_e;
+			return _e;
 		}
 
         reference operator[](size_type n) {
@@ -367,7 +370,7 @@ namespace ft {
         }
 
         iterator insert(iterator position, const value_type &val) {
-            insert(position, 1, val);
+            insert(position, (size_type)1, val);
             return position;
 		}
 
@@ -419,7 +422,7 @@ namespace ft {
 
 		iterator erase(iterator first, iterator last) {
             if (first == last)
-                return ;
+                return last;
             
             std::allocator<T> alloc;
 

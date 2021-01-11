@@ -20,6 +20,8 @@ int main() {
 
     if (line[0] == '1')
         testList();
+    else if (line[0] == '2')
+        testVector();
 
     return 0;
 }

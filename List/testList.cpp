@@ -20,7 +20,7 @@ void    list_enum(ft::List<int> &lst) {
     }
 }
 
-void    test_iterator() {
+void    lst_test_iterator() {
     std::cout << "\e[0;34m----------ITERATOR----------" << std::endl;
 
     ft::List<int> lst;
@@ -65,7 +65,7 @@ void    test_iterator() {
     lst.clear();
 }
 
-void    test_capacity() {
+void    lst_test_capacity() {
     std::cout << "\e[0;34m----------CAPACITY----------" << std::endl;
 
     ft::List<int> lst;
@@ -96,7 +96,7 @@ void    test_capacity() {
     std::cout << "size: " << lst.size() << std::endl;
 }
 
-void    test_access() {
+void    lst_test_access() {
     std::cout << "\e[0;34m----------ACCESS----------" << std::endl;
 
     ft::List<int> lst;
@@ -114,7 +114,7 @@ void    test_access() {
     lst.clear();
 }
 
-void    test_assign() {
+void    lst_test_assign() {
     std::cout << "\e[0;34m----------ASSIGN----------" << std::endl;
 
     ft::List<int> lst;
@@ -148,7 +148,7 @@ void    test_assign() {
     lst2.clear();
 }
 
-void    test_push_pop() {
+void    lst_test_push_pop() {
     std::cout << "\e[0;34m----------PUSH & POP----------" << std::endl;
 
     ft::List<int> lst;
@@ -172,7 +172,7 @@ void    test_push_pop() {
     lst.clear();
 }
 
-void    test_insert() {
+void    lst_test_insert() {
     std::cout << "\e[0;34m----------INSERT----------" << std::endl;
 
     ft::List<int> lst;
@@ -203,7 +203,7 @@ void    test_insert() {
     lst2.clear();
 }
 
-void    test_erase() {
+void    lst_test_erase() {
     std::cout << "\e[0;34m----------ERASE----------" << std::endl;
 
     ft::List<int> lst;
@@ -231,7 +231,7 @@ void    test_erase() {
     lst.clear();    
 }
 
-void    test_swap() {
+void    lst_test_swap() {
     std::cout << "\e[0;34m----------SWAP----------" << std::endl;
 
     ft::List<int> lst;
@@ -262,7 +262,7 @@ void    test_swap() {
     list_enum(lst2);
 }
 
-void    test_resize() {
+void    lst_test_resize() {
     std::cout << "\e[0;34m----------RESIZE----------" << std::endl;
 
     ft::List<int> lst;
@@ -280,7 +280,7 @@ void    test_resize() {
     list_enum(lst);
 }
 
-void    test_clear() {
+void    lst_test_clear() {
     std::cout << "\e[0;34m----------CLEAR----------" << std::endl;
 
     ft::List<int> lst;
@@ -295,7 +295,7 @@ void    test_clear() {
     list_enum(lst);
 }
 
-void    test_splice() {
+void    lst_test_splice() {
     std::cout << "\e[0;34m----------SPLICE----------" << std::endl;
 
     ft::List<int> lst;
@@ -343,7 +343,7 @@ void    test_splice() {
     list_enum(lst2);
 }
 
-void    test_remove() {
+void    lst_test_remove() {
     std::cout << "\e[0;34m----------REMOVE----------" << std::endl;
 
     ft::List<int> lst;
@@ -367,7 +367,7 @@ bool predicate2(int i) {
     return i > 1;
 }
 
-void    test_remove_if() {
+void    lst_test_remove_if() {
     std::cout << "\e[0;34m----------REMOVE IF----------" << std::endl;
 
     ft::List<int> lst;
@@ -388,7 +388,7 @@ void    test_remove_if() {
     list_enum(lst);
 }
 
-void    test_unique() {
+void    lst_test_unique() {
     std::cout << "\e[0;34m----------UNIQUE----------" << std::endl;
 
     ft::List<int> lst;
@@ -407,7 +407,7 @@ void    test_unique() {
     list_enum(lst);
 }
 
-void    test_merge_sort_reverse() {
+void    lst_test_merge_sort_reverse() {
     std::cout << "\e[0;34m----------MERGE SORT REVERSE----------" << std::endl;
 
     ft::List<int> lst;
@@ -461,7 +461,7 @@ void    test_merge_sort_reverse() {
     list_enum(lst2);
 }
 
-void    test_relational_operators() {
+void    lst_test_relational_operators() {
     std::cout << "\e[0;34m----------RELATIONAL OPERTORS----------" << std::endl;
 
 	ft::List<int> lst;
@@ -500,20 +500,20 @@ void    test_relational_operators() {
 
 
 void testList() {
-	test_iterator();
-    test_capacity();
-    test_access();
-    test_assign();
-    test_push_pop();
-    test_insert(); 
-    test_erase();
-    test_swap();
-    test_resize();
-    test_clear();
-    test_splice();
-    test_remove();
-    test_remove_if();
-    test_unique();
-    test_merge_sort_reverse();
-    test_relational_operators();
+	lst_test_iterator();
+    lst_test_capacity();
+    lst_test_access();
+    lst_test_assign();
+    lst_test_push_pop();
+    lst_test_insert(); 
+    lst_test_erase();
+    lst_test_swap();
+    lst_test_resize();
+    lst_test_clear();
+    lst_test_splice();
+    lst_test_remove();
+    lst_test_remove_if();
+    lst_test_unique();
+    lst_test_merge_sort_reverse();
+    lst_test_relational_operators();
 }
