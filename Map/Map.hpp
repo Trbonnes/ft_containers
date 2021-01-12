@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/12 09:12:03 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/12 13:20:54 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/12 13:56:17 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,6 +257,76 @@ namespace ft {
 		const_reverse_iterator rend() const {
 			return const_reverse_iterator(begin());
 		}
+
+        //capacity
+
+		bool empty() const {
+			return _size == 0;
+		}
+
+		size_type size() const {
+			return _size;
+		}
+
+		size_type max_size() const {
+			return std::numeric_limits<std::size_t>::max() / sizeof(value_type);
+		}
+
+        //element access
+
+        mapped_type &operator[](const key_type& k) {
+            return (*((this->insert(std::make_pair(k,mapped_type()))).first)).second;
+        }
+
+        //modifiers
+
+        pair<iterator, bool> insert(const value_type &val) {
+            _node *n = _root;
+            _node *new;
+
+            while (1) {
+                if (!_cmp(n->data, val) && !_cmp(val, n->data)) {
+                    return std::make_pair(iterator(n), false);
+                }
+
+                if (_cmp(n->data, val)) {
+                    if (n->right) {
+                        n = n->right;
+                    }
+                    else {
+                        n->right = new _node(NULL, NULL, n, val);
+                        n = n->right;
+                        break ;
+                    }
+                }
+                
+                else if (_cmp(val, n->data)) {
+                    if (n->left) {
+                        n = n->left;
+                    }
+                    else {
+                        n->left = new _node(NULL, NULL, n, val);
+                        n = n->left;
+                        break ;
+                    }
+                }
+            }
+            return std::make_pair(iterator(n, true));
+            
+        }
+
+        iterator insert(iterator position, const value_type &val) {
+            (void)position;
+            iterator = insert(val).first;
+            
+            return iterator;
+        }
+
+        template <typename InputIterator>
+        void insert(InputIterator first, InputIterator last) {
+            for (; first != last; first++)
+                insert(*first);
+        }
         
     }; //Map
 
