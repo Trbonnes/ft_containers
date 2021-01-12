@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:12:50 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/11 16:57:06 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/12 11:07:23 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,7 @@ namespace ft {
 		}
 
 		template <typename InputIterator>
-		List(InputIterator first, InputIterator last) {
+		List(InputIterator first, InputIterator last): _size(0) {
 			_first = new _node(NULL, NULL); //Sentinel
 			_last = _first;
 

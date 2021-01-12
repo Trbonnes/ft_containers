@@ -8,8 +8,10 @@
 
 # include "../List/List.hpp"
 # include "../Vector/Vector.hpp"
+# include "../Map/Map.hpp"
 
 void testList();
 void testVector();
+void testMap();
 
 #endif

@@ -1,0 +1,243 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Map.hpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/01/12 09:12:03 by trbonnes          #+#    #+#             */
+/*   Updated: 2021/01/12 12:16:36 by trbonnes         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef MAP_HPP
+# define MAP_HPP
+
+# include <utility>
+# include <limits>
+# include <sstream>
+# include <memory>
+# include "../ReverseIterator.hpp"
+# include "../utils.hpp"
+
+namespace ft {
+
+	template <typename Key, typename T, typename Compare = Less<Key> >
+	class Map;
+
+    template <typename Key, typename T, typename Compare = Less<Key> >
+	class	MapIterator {
+	public:
+        typedef Key key_type;
+		typedef T mapped_type;
+        typedef pair<const key_type, mapped_type> value_type;
+        typedef Compare key_compare;
+		typedef value_type *pointer;
+		typedef value_type &reference;
+		typedef	std::ptrdiff_t difference_type;
+		typedef std::bidirectional_iterator_tag iterator_category;
+		
+	private:
+		typedef typename Map<Key, T, Compare>::_node _node;
+		typedef MapIterator<Key, T, Compare> _Self;
+
+		_node *_n;
+
+	public:
+		MapIterator() {}
+		MapIterator(_node *node): _n(node) {}
+		MapIterator(const _Self &c): _n(c._n) {}
+		~MapIterator() {}
+
+		template <typename _Key, typename _T, typename _Compare = Less<_Key> >
+		friend class Map;
+
+		template <typename _Key, typename _T, typename _Compare = Less<_Key> >
+		friend bool operator==(const MapIterator<_Key, _T, _Compare> &lhs, const MapIterator<_Key, _T, _Compare> &rhs);
+
+		template <typename _Key, typename _T, typename _Compare = Less<_Key> >
+		friend bool operator!=(const MapIterator<_Key, _T, _Compare> &lhs, const MapIterator<_Key, _T, _Compare> &rhs);
+
+		_Self &operator=(const _Self &c) {
+			_n = c._n;
+			return *this;
+		}
+
+		_Self &operator++() {
+            if (_n->right) {
+                _n = _n->right;
+                while (_n->left) {
+                    _n = _n->left;
+                }
+            }
+            else {
+                _node *tmp;
+                do {
+                    tmp = _n;
+                    _n = _n->parent;
+                }
+            }
+
+			return *this;
+		}
+
+		_Self operator++(int) {
+			_Self cpy = *this;
+            operator++();
+			return cpy;
+		}
+
+		_Self &operator--() {
+			return *this;
+		}
+
+		_Self operator--(int) {
+			_Self cpy = *this;
+            operator--();
+			return cpy;
+		}
+
+		reference operator*() const {
+			return _n->data;
+		}
+
+		pointer operator->() const {
+			return &_n->data;
+		}
+	}; //MapIterator
+
+	template <typename Key, typename T, typename Compare = Less<Key> >
+	bool operator==(const MapIterator<Key, T, Compare> &lhs, const MapIterator<Key, T, Compare> &rhs) {
+		return lhs._n == rhs._n;
+	}
+
+	template <typename Key, typename T, typename Compare = Less<Key> >
+	bool operator!=(const MapIterator<Key, T, Compare> &lhs, const MapIterator<Key, T, Compare> &rhs) {
+		return !(lhs._n == rhs._n);
+	}
+    
+    template <typename Key, typename T, typename Compare = Less<Key> >
+	class	Map {
+	public:
+        typedef Key key_type;
+		typedef T mapped_type;
+        typedef pair<const key_type, mapped_type> value_type;
+        typedef Compare key_compare;
+		typedef value_type &reference;
+		typedef const value_type &const_reference;
+		typedef value_type *pointer;
+		typedef const value_type *const_pointer;
+		typedef MapIterator<T> iterator;
+		typedef const MapIterator<const T> const_iterator;
+		typedef ReverseIterator<iterator> reverse_iterator;
+		typedef const ReverseIterator<const_iterator> const_reverse_iterator;
+		typedef std::ptrdiff_t difference_type;
+		typedef size_t size_type;
+
+	private:
+		typedef Map<Key, T, Compare> _Self;
+
+        struct _node {
+			value_type data;
+
+			_node *left; //<
+			_node *right; //>
+
+            _node *parent;
+
+			_node(_node *left_, _node *right_, _node *parent_, value_type data_)
+            : left(left_), right(right_), parent(parent_), data(data_) {}; 
+		};
+
+		size_type _size;
+		_node *_root;
+        _node *_sentinel;
+
+        key_compare _cmp;
+		
+	public:
+
+		//construtors
+
+		Map(const key_compare &comp = key_compare()): _size(0) {
+			_root = new _node(NULL, NULL, NULL, ); //Sentinel
+			_last = _root;
+		}
+
+		template <typename InputIterator>
+		Map(InputIterator first, InputIterator last, const key_compare &comp = key_compare()): _size(0) {
+			_root = new _node(NULL, NULL); //Sentinel
+			_last = _root;
+
+			insert(begin(), first, last);
+		}
+
+		Map(const _Self &c): _size(0) {
+			_root = new _node(NULL, NULL); //Sentinel
+			_last = _root;
+
+			insert(begin(), c.begin(), c.end());
+
+		//destructor
+
+		~Map() {
+			clear();
+			delete _last;
+		}
+
+		template <typename _Key, typename _T, typename _Compare = Less<_Key> >
+		friend class Map;
+		
+		template <typename _Key, typename _T, typename _Compare = Less<_Key> >
+		friend class MapIterator;
+
+		template <typename Iterator>
+		friend class ReverseIterator;
+		
+		//operators and iterators
+
+		_Self &operator=(const Map &c) {
+			clear();
+			insert(begin(), c.begin(), c.end());
+			return *this;
+		}
+
+		iterator begin() {
+			return iterator(_root);
+		}
+
+		iterator end() {
+			return iterator(_last);
+		}
+
+		const_iterator begin() const {
+			typedef typename Map<const Key, const T, const Compare>::_node const_node;
+			return const_iterator(reinterpret_cast<const_node *>(_root));
+		}
+
+		const_iterator end() const {
+			typedef typename Map<const Key, const T, const Compare>::_node const_node;
+			return const_iterator(reinterpret_cast<const_node *>(_last));
+		}
+
+		reverse_iterator rbegin() {
+			return reverse_iterator(end());
+		}
+
+		reverse_iterator rend() {
+			return reverse_iterator(begin());
+		}
+
+		const_reverse_iterator rbegin() const {
+			return const_reverse_iterator(end());
+		}
+
+		const_reverse_iterator rend() const {
+			return const_reverse_iterator(begin());
+		}
+        
+    }; //Map
+
+} //namespace
+
+#endif
