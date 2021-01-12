@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/11 13:37:35 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/11 17:51:15 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/12 08:56:26 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,7 +243,7 @@ namespace ft {
 		}
 
 		const_iterator end() const {
-			return _arr;
+			return _arr + _size;
 		}
 
 		reverse_iterator rbegin() {
@@ -288,7 +288,7 @@ namespace ft {
 		}
 
         void reserve(size_type n) {
-            if (_cap < n) {
+            if (n &&_cap < n) {
                 std::allocator<T> alloc;
                 T *realloc = alloc.allocate(n);
                 for (size_type i = 0; i < _size; i++) {
@@ -382,7 +382,7 @@ namespace ft {
 
             size_type index = position._e - _arr;
             reserve(_size + n);
-            for (size_type i = _size - 1; i >= index; i--) {
+            for (ptrdiff_t i = _size - 1; i >= (ptrdiff_t)index; i--) {
                 alloc.construct(&_arr[i + n], _arr[i]);
                 alloc.destroy(&_arr[i]);
             }
@@ -404,7 +404,7 @@ namespace ft {
             size_type index = position._e - _arr;
             size_type n = last - first;
             reserve(_size + n);
-            for (size_type i = _size - 1; i >= index; i--) {
+            for (ptrdiff_t i = _size - 1; i >= (ptrdiff_t)index; i--) {
                 alloc.construct(&_arr[i + n], _arr[i]);
                 alloc.destroy(&_arr[i]);
             }

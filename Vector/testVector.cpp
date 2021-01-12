@@ -54,10 +54,12 @@ void    vec_test_iterator() {
     it = vec.begin();
     std::cout << "begin: " << *it << std::endl;
     it = vec.end();
+    it--;
     std::cout << "end: " << *it << std::endl;
     rit = vec.rbegin();
     std::cout << "rbegin: " << *rit << std::endl;
     rit = vec.rend();
+    rit--;
     std::cout << "rend: " << *rit << std::endl;
 
     vec.clear();
