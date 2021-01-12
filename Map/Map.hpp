@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/12 09:12:03 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/12 12:16:36 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/12 13:20:54 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ namespace ft {
                 do {
                     tmp = _n;
                     _n = _n->parent;
-                }
+                } while(_n && _n->right == tmp);
             }
 
 			return *this;
@@ -88,6 +88,20 @@ namespace ft {
 		}
 
 		_Self &operator--() {
+            if (_n->left) {
+                _n = _n->left;
+                while (_n && _n->right) {
+                    _n = _n->right;
+                }
+            }
+            else {
+                _node *tmp;
+                do {
+                    tmp = _n;
+                    _n = _n->parent;
+                } while (_n && _n->left == tmp);
+            }
+
 			return *this;
 		}
 
@@ -161,20 +175,20 @@ namespace ft {
 
 		Map(const key_compare &comp = key_compare()): _size(0) {
 			_root = new _node(NULL, NULL, NULL, ); //Sentinel
-			_last = _root;
+			_sentinel = _root;
 		}
 
 		template <typename InputIterator>
 		Map(InputIterator first, InputIterator last, const key_compare &comp = key_compare()): _size(0) {
 			_root = new _node(NULL, NULL); //Sentinel
-			_last = _root;
+			_sentinel = _root;
 
 			insert(begin(), first, last);
 		}
 
 		Map(const _Self &c): _size(0) {
 			_root = new _node(NULL, NULL); //Sentinel
-			_last = _root;
+			_sentinel = _root;
 
 			insert(begin(), c.begin(), c.end());
 
@@ -182,7 +196,7 @@ namespace ft {
 
 		~Map() {
 			clear();
-			delete _last;
+			delete _sentinel;
 		}
 
 		template <typename _Key, typename _T, typename _Compare = Less<_Key> >
@@ -203,21 +217,29 @@ namespace ft {
 		}
 
 		iterator begin() {
-			return iterator(_root);
+            _node *n = _root;
+
+            while (_n && _n->left) {
+                _n = _n->left;
+            }
+			return iterator(_n);
 		}
 
 		iterator end() {
-			return iterator(_last);
+			return iterator(_sentinel);
 		}
 
 		const_iterator begin() const {
-			typedef typename Map<const Key, const T, const Compare>::_node const_node;
-			return const_iterator(reinterpret_cast<const_node *>(_root));
+            _node *n = _root;
+
+            while (_n && _n->left) {
+                _n = _n->left;
+            }
+			return const_iterator(_n);
 		}
 
 		const_iterator end() const {
-			typedef typename Map<const Key, const T, const Compare>::_node const_node;
-			return const_iterator(reinterpret_cast<const_node *>(_last));
+			return const_iterator(_sentinel);
 		}
 
 		reverse_iterator rbegin() {
