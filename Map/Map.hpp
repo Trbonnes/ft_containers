@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/12 09:12:03 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/15 09:50:09 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/15 15:04:51 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ namespace ft {
 	public:
         typedef Key key_type;
 		typedef T mapped_type;
-        typedef pair<const key_type, mapped_type> value_type;
+        typedef std::pair<const key_type, mapped_type> value_type;
         typedef Compare key_compare;
 		typedef value_type *pointer;
 		typedef value_type &reference;
@@ -49,13 +49,13 @@ namespace ft {
 		MapIterator(const _Self &c): _n(c._n) {}
 		~MapIterator() {}
 
-		template <typename _Key, typename _T, typename _Compare = Less<_Key> >
+		template <typename _Key, typename _T, typename _Compare>
 		friend class Map;
 
-		template <typename _Key, typename _T, typename _Compare = Less<_Key> >
+		template <typename _Key, typename _T, typename _Compare>
 		friend bool operator==(const MapIterator<_Key, _T, _Compare> &lhs, const MapIterator<_Key, _T, _Compare> &rhs);
 
-		template <typename _Key, typename _T, typename _Compare = Less<_Key> >
+		template <typename _Key, typename _T, typename _Compare>
 		friend bool operator!=(const MapIterator<_Key, _T, _Compare> &lhs, const MapIterator<_Key, _T, _Compare> &rhs);
 
 		_Self &operator=(const _Self &c) {
@@ -120,29 +120,29 @@ namespace ft {
 		}
 	}; //MapIterator
 
-	template <typename Key, typename T, typename Compare = Less<Key> >
+	template <typename Key, typename T, typename Compare>
 	bool operator==(const MapIterator<Key, T, Compare> &lhs, const MapIterator<Key, T, Compare> &rhs) {
 		return lhs._n == rhs._n;
 	}
 
-	template <typename Key, typename T, typename Compare = Less<Key> >
+	template <typename Key, typename T, typename Compare>
 	bool operator!=(const MapIterator<Key, T, Compare> &lhs, const MapIterator<Key, T, Compare> &rhs) {
 		return !(lhs._n == rhs._n);
 	}
     
-    template <typename Key, typename T, typename Compare = Less<Key> >
+    template <typename Key, typename T, typename Compare>
 	class	Map {
 	public:
         typedef Key key_type;
 		typedef T mapped_type;
-        typedef pair<const key_type, mapped_type> value_type;
+        typedef std::pair<const key_type, mapped_type> value_type;
         typedef Compare key_compare;
 		typedef value_type &reference;
 		typedef const value_type &const_reference;
 		typedef value_type *pointer;
 		typedef const value_type *const_pointer;
-		typedef MapIterator<T> iterator;
-		typedef const MapIterator<const T> const_iterator;
+		typedef MapIterator<Key, T, Compare> iterator;
+		typedef const MapIterator<const Key, const T, Compare> const_iterator;
 		typedef ReverseIterator<iterator> reverse_iterator;
 		typedef const ReverseIterator<const_iterator> const_reverse_iterator;
 		typedef std::ptrdiff_t difference_type;
@@ -173,20 +173,20 @@ namespace ft {
 
 		//construtors
 
-		Map(const key_compare &comp = key_compare()): _size(0) {
+		Map(const key_compare &comp = key_compare()): _size(0), _cmp(comp) {
 			_root = new _node(NULL, NULL, NULL, value_type()); //Sentinel
 			_sentinel = _root;
 		}
 
 		template <typename InputIterator>
-		Map(InputIterator first, InputIterator last, const key_compare &comp = key_compare()): _size(0) {
+		Map(InputIterator first, InputIterator last, const key_compare &comp = key_compare()): _size(0), _cmp(comp) {
 			_root = new _node(NULL, NULL, NULL, value_type()); //Sentinel
 			_sentinel = _root;
 
 			insert(begin(), first, last);
 		}
 
-		Map(const _Self &c): _size(0) {
+		Map(const _Self &c): _size(0), _cmp(c._cmp) {
 			_root = new _node(NULL, NULL, NULL, value_type()); //Sentinel
 			_sentinel = _root;
 
@@ -213,6 +213,8 @@ namespace ft {
 
 		_Self &operator=(const Map &c) {
 			clear();
+			_size = 0;
+			_cmp = c._cmp;
 			insert(begin(), c.begin(), c.end());
 			return *this;
 		}
@@ -220,10 +222,10 @@ namespace ft {
 		iterator begin() {
             _node *n = _root;
 
-            while (_n && _n->left) {
-                _n = _n->left;
+            while (n && n->left) {
+                n = n->left;
             }
-			return iterator(_n);
+			return iterator(n);
 		}
 
 		iterator end() {
@@ -233,10 +235,10 @@ namespace ft {
 		const_iterator begin() const {
             _node *n = _root;
 
-            while (_n && _n->left) {
-                _n = _n->left;
+            while (n && n->left) {
+                n = n->left;
             }
-			return const_iterator(_n);
+			return const_iterator(n);
 		}
 
 		const_iterator end() const {
@@ -281,7 +283,7 @@ namespace ft {
 
         //modifiers
 
-        pair<iterator, bool> insert(const value_type &val) {
+        std::pair<iterator, bool> insert(const value_type &val) {
             _node *n = _root;
 
             while (1) {
@@ -334,9 +336,9 @@ namespace ft {
 
         iterator insert(iterator position, const value_type &val) {
             (void)position;
-            iterator = insert(val).first;
+            iterator it = insert(val).first;
             
-            return iterator;
+            return it;
         }
 
         template <typename InputIterator>
@@ -344,6 +346,103 @@ namespace ft {
             for (; first != last; first++)
                 insert(*first);
         }
+
+		void erase(iterator position) {
+			_node *n = position._n;
+
+
+			if (n->parent) {
+				if (n->right) {
+					if (n == n->parent->right)
+						n->parent->right = n->right;
+					else
+						n->parent->left = n->right;
+					n->right->parent = n->parent;
+
+					if (n->left) {
+						_node *tmp = n->right;
+						while (tmp->left)
+							tmp = tmp->left;
+						tmp->left = n->left;
+						n->left->parent = tmp;
+					}
+				}
+				else if (n->left) {
+					if (n == n->parent->right)
+						n->parent->right = n->left;
+					else
+						n->parent->left = n->left;
+					n->left->parent = n->parent;
+				}
+				else {
+					if (n == n->parent->right)
+						n->parent->right = NULL;
+					else
+						n->parent->left = NULL;
+				}
+			}
+			else {
+				if (n->right) {
+					_root = n->right;
+					n->right->parent = NULL;
+
+					if (n->left) {
+						_node *tmp = n->right;
+						while (tmp->left)
+							tmp = tmp->left;
+						tmp->left = n->left;
+						n->left->parent = tmp;
+					}
+				}
+				else if (n->left) {
+					_root = n->left;
+					n->left->parent = NULL;
+				}
+				else 
+					_root = _sentinel;
+			}
+			delete n;
+		}
+
+		size_type erase(const value_type &val) {
+			iterator it = begin();
+
+			for(; *it != val; it++) {}
+			if (it != end())
+				erase(it);
+			return 1;
+		}
+
+		void erase(iterator first, iterator last) {
+			for (; first != last; first++) 
+				erase(first);
+		}
+
+		void swap(map &x) {
+			std::swap(_root, x._root);
+			std::swap(_sentinel, x._sentinel);
+			std::swap(_size, x._size);
+		}
+
+		void clear() {
+			erase(begin(), end());
+			_sentinel->right = NULL;
+			_sentinel->left = NULL;
+			_sentinel->parent = NULL;
+			_sentinel->height = 0;
+			_root = _sentinel;
+			_size = 0;
+		}
+
+		//observers
+
+		key_compare key_comp() const {
+			return _cmp;
+		}
+
+		value_compare value_comp() const {
+			
+		}
         
     }; //Map
 
