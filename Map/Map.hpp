@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/12 09:12:03 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/12 13:56:17 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/15 09:50:09 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,23 +174,24 @@ namespace ft {
 		//construtors
 
 		Map(const key_compare &comp = key_compare()): _size(0) {
-			_root = new _node(NULL, NULL, NULL, ); //Sentinel
+			_root = new _node(NULL, NULL, NULL, value_type()); //Sentinel
 			_sentinel = _root;
 		}
 
 		template <typename InputIterator>
 		Map(InputIterator first, InputIterator last, const key_compare &comp = key_compare()): _size(0) {
-			_root = new _node(NULL, NULL); //Sentinel
+			_root = new _node(NULL, NULL, NULL, value_type()); //Sentinel
 			_sentinel = _root;
 
 			insert(begin(), first, last);
 		}
 
 		Map(const _Self &c): _size(0) {
-			_root = new _node(NULL, NULL); //Sentinel
+			_root = new _node(NULL, NULL, NULL, value_type()); //Sentinel
 			_sentinel = _root;
 
 			insert(begin(), c.begin(), c.end());
+		}
 
 		//destructor
 
@@ -282,9 +283,23 @@ namespace ft {
 
         pair<iterator, bool> insert(const value_type &val) {
             _node *n = _root;
-            _node *new;
 
             while (1) {
+				if (n == _sentinel) {
+					_node *parent = _sentinel->parent;
+					
+					if (parent) {
+						parent->right = new _node(NULL, _sentinel, parent, val);
+						n = parent->right;
+					}
+					else {
+						_root = new _node(NULL, _sentinel, parent, val);
+						n = _root;
+					}
+					_sentinel->parent = n;
+					break ;
+				}
+
                 if (!_cmp(n->data, val) && !_cmp(val, n->data)) {
                     return std::make_pair(iterator(n), false);
                 }
@@ -311,6 +326,8 @@ namespace ft {
                     }
                 }
             }
+
+			_size++;
             return std::make_pair(iterator(n, true));
             
         }
@@ -330,6 +347,6 @@ namespace ft {
         
     }; //Map
 
-} //namespace
+}; //namespace
 
 #endif
