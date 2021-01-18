@@ -24,6 +24,8 @@ int main() {
         testVector();
     else if (line[0] == '3')
         testMap();
+    else if (line[0] == '4')
+        testStack();
 
     return 0;
 }
