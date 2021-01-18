@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/12 09:12:03 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/18 10:41:44 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/18 12:02:40 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,7 +189,7 @@ namespace ft {
             _node *parent;
 
 			_node(_node *left_, _node *right_, _node *parent_, value_type data_)
-            : left(left_), right(right_), parent(parent_), data(data_) {}; 
+            : data(data_), left(left_), right(right_), parent(parent_) {}; 
 		};
 
 		size_type _size;
@@ -229,10 +229,10 @@ namespace ft {
 			delete _sentinel;
 		}
 
-		template <typename _Key, typename _T, typename _Compare = Less<_Key> >
+		template <typename _Key, typename _T, typename _Compare>
 		friend class Map;
 		
-		template <typename _Key, typename _T, typename _Compare = Less<_Key> >
+		template <typename _Key, typename _T, typename _Compare>
 		friend class MapIterator;
 
 		template <typename Iterator>
@@ -331,11 +331,11 @@ namespace ft {
 					break ;
 				}
 
-                if (!_cmp(n->data, val) && !_cmp(val, n->data)) {
+                if (!_cmp(n->data.first, val.first) && !_cmp(val.first, n->data.first)) {
                     return std::make_pair(iterator(n), false);
                 }
 
-                if (_cmp(n->data, val)) {
+                if (_cmp(n->data.first, val.first)) {
                     if (n->right) {
                         n = n->right;
                     }
@@ -346,7 +346,7 @@ namespace ft {
                     }
                 }
                 
-                else if (_cmp(val, n->data)) {
+                else if (_cmp(val.first, n->data.first)) {
                     if (n->left) {
                         n = n->left;
                     }
@@ -359,7 +359,7 @@ namespace ft {
             }
 
 			_size++;
-            return std::make_pair(iterator(n, true));
+            return std::make_pair(iterator(n), true);
             
         }
 
@@ -430,24 +430,30 @@ namespace ft {
 				else 
 					_root = _sentinel;
 			}
+			_size--;
 			delete n;
 		}
 
-		size_type erase(const value_type &val) {
+		size_type erase(const key_type &k) {
 			iterator it = begin();
 
-			for(; *it != val; it++) {}
-			if (it != end())
+			for(; (*it).first != k; it++) {}
+			if (it != end()) {
 				erase(it);
-			return 1;
+				return 1;
+			}
+			return 0;
 		}
 
 		void erase(iterator first, iterator last) {
-			for (; first != last; first++) 
-				erase(first);
+			for (; first != last;) {
+				iterator it = first;
+				first++;
+				erase(it);
+			}
 		}
 
-		void swap(map &x) {
+		void swap(Map &x) {
 			std::swap(_root, x._root);
 			std::swap(_sentinel, x._sentinel);
 			std::swap(_size, x._size);
@@ -458,7 +464,6 @@ namespace ft {
 			_sentinel->right = NULL;
 			_sentinel->left = NULL;
 			_sentinel->parent = NULL;
-			_sentinel->height = 0;
 			_root = _sentinel;
 			_size = 0;
 		}
@@ -480,7 +485,7 @@ namespace ft {
 			_node *n = _root;
 
 			while (n && n != _sentinel) {
-				bool test = _cmp(n->data.first, k)
+				bool test = _cmp(n->data.first, k);
 				if (!test && !_cmp(k, n->data.first)) {
 					return iterator(n);
 				}
@@ -489,13 +494,14 @@ namespace ft {
 				else
 					n = n->right;
 			}
+			return end();
 		}
 
 		const_iterator find(const key_type &k) const {
 			_node *n = _root;
 
 			while (n && n != _sentinel) {
-				bool test = _cmp(n->data.first, k)
+				bool test = _cmp(n->data.first, k);
 				if (!test && !_cmp(k, n->data.first)) {
 					return const_iterator(n);
 				}
@@ -511,7 +517,7 @@ namespace ft {
 			_node *n = _root;
 
 			while (n && n != _sentinel) {
-				bool test = _cmp(n->data.first, k)
+				bool test = _cmp(n->data.first, k);
 				if (!test && !_cmp(k, n->data.first)) {
 					return 1;
 				}
@@ -525,7 +531,7 @@ namespace ft {
 
 		iterator lower_bound(const key_type &k) {
 			for (iterator it = begin(); it != end(); it++) {
-				if (!_cmp(*it.first, k))
+				if (!_cmp((*it).first, k))
 					return it;
 			}
 			return end();
@@ -533,7 +539,7 @@ namespace ft {
 
 		const_iterator lower_bound(const key_type &k) const {
 			for (const_iterator it = begin(); it != end(); it++) {
-				if (!_cmp(*it.first, k))
+				if (!_cmp((*it).first, k))
 					return it;
 			}
 			return end();
@@ -541,7 +547,7 @@ namespace ft {
 
 		iterator upper_bound(const key_type &k) {
 			for (iterator it = begin(); it != end(); it++) {
-				if (_cmp(k, *it.first))
+				if (_cmp(k, (*it).first))
 					return it;
 			}
 			return end();
@@ -549,18 +555,18 @@ namespace ft {
 
 		const_iterator upper_bound(const key_type &k) const {
 			for (const_iterator it = begin(); it != end(); it++) {
-				if (_cmp(k, *it.first))
+				if (_cmp(k, (*it).first))
 					return it;
 			}
 			return end();
 		}
 
-		pair<iterator, iterator> equal_range(const key_type &k) {
-			return make_pair(lower_bound(k), upper_bound(k));
+		std::pair<iterator, iterator> equal_range(const key_type &k) {
+			return std::make_pair(lower_bound(k), upper_bound(k));
 		}
 
-		pair<const_iterator, const_iterator> equal_range(const key_type &k) const {
-			return make_pair(lower_bound(k), upper_bound(k));
+		std::pair<const_iterator, const_iterator> equal_range(const key_type &k) const {
+			return std::make_pair(lower_bound(k), upper_bound(k));
 		}
         
     }; //Map

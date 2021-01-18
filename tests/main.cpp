@@ -22,6 +22,8 @@ int main() {
         testList();
     else if (line[0] == '2')
         testVector();
+    else if (line[0] == '3')
+        testMap();
 
     return 0;
 }
