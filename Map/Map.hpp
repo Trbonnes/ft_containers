@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/12 09:12:03 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/15 15:04:51 by trbonnes         ###   ########.fr       */
+/*   Updated: 2021/01/18 10:41:44 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,6 +147,35 @@ namespace ft {
 		typedef const ReverseIterator<const_iterator> const_reverse_iterator;
 		typedef std::ptrdiff_t difference_type;
 		typedef size_t size_type;
+
+		class value_compare {
+		private:
+			key_compare _cmp;
+
+		public:
+			typedef bool result_type;
+			typedef value_type first_argument_type;
+			typedef value_type second_argument_type;
+			
+			template <typename _Key, typename _T, typename _Compare>
+			friend class Map;
+
+			value_compare(key_compare c): _cmp(c) {}
+
+			value_compare(const value_compare &val): _cmp(val._cmp) {}
+
+			~value_compare() {}
+
+			value_compare &operator=(const value_compare &val) {
+				_cmp = val._cmp;
+				return *this;
+			}
+
+			bool operator()(value_type &x, value_type &y) const {
+				return _cmp(x.first, y.first);
+			}
+
+		};
 
 	private:
 		typedef Map<Key, T, Compare> _Self;
@@ -441,7 +470,97 @@ namespace ft {
 		}
 
 		value_compare value_comp() const {
-			
+			value_compare comp(_cmp);
+			return comp;
+		}
+
+		//operations
+
+		iterator find(const key_type &k) {
+			_node *n = _root;
+
+			while (n && n != _sentinel) {
+				bool test = _cmp(n->data.first, k)
+				if (!test && !_cmp(k, n->data.first)) {
+					return iterator(n);
+				}
+				if (!test)
+					n = n->left;
+				else
+					n = n->right;
+			}
+		}
+
+		const_iterator find(const key_type &k) const {
+			_node *n = _root;
+
+			while (n && n != _sentinel) {
+				bool test = _cmp(n->data.first, k)
+				if (!test && !_cmp(k, n->data.first)) {
+					return const_iterator(n);
+				}
+				if (!test)
+					n = n->left;
+				else
+					n = n->right;
+			}
+			return end();
+		}
+
+		size_type count(const key_type &k) const {
+			_node *n = _root;
+
+			while (n && n != _sentinel) {
+				bool test = _cmp(n->data.first, k)
+				if (!test && !_cmp(k, n->data.first)) {
+					return 1;
+				}
+				if (!test)
+					n = n->left;
+				else
+					n = n->right;
+			}
+			return 0;
+		}
+
+		iterator lower_bound(const key_type &k) {
+			for (iterator it = begin(); it != end(); it++) {
+				if (!_cmp(*it.first, k))
+					return it;
+			}
+			return end();
+		}
+
+		const_iterator lower_bound(const key_type &k) const {
+			for (const_iterator it = begin(); it != end(); it++) {
+				if (!_cmp(*it.first, k))
+					return it;
+			}
+			return end();
+		}
+
+		iterator upper_bound(const key_type &k) {
+			for (iterator it = begin(); it != end(); it++) {
+				if (_cmp(k, *it.first))
+					return it;
+			}
+			return end();
+		}
+
+		const_iterator upper_bound(const key_type &k) const {
+			for (const_iterator it = begin(); it != end(); it++) {
+				if (_cmp(k, *it.first))
+					return it;
+			}
+			return end();
+		}
+
+		pair<iterator, iterator> equal_range(const key_type &k) {
+			return make_pair(lower_bound(k), upper_bound(k));
+		}
+
+		pair<const_iterator, const_iterator> equal_range(const key_type &k) const {
+			return make_pair(lower_bound(k), upper_bound(k));
 		}
         
     }; //Map
