@@ -26,6 +26,8 @@ int main() {
         testMap();
     else if (line[0] == '4')
         testStack();
+    else if (line[0] == '5')
+        testQueue();
 
     return 0;
 }

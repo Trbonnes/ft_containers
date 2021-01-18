@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Stack.hpp                                          :+:      :+:    :+:   */
+/*   Queue.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/01/18 12:17:17 by trbonnes          #+#    #+#             */
-/*   Updated: 2021/01/18 14:39:10 by trbonnes         ###   ########.fr       */
+/*   Created: 2021/01/18 14:37:18 by trbonnes          #+#    #+#             */
+/*   Updated: 2021/01/18 14:42:30 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef STACK_HPP
-# define STACK_HPP
+#ifndef QUEUE_HPP
+# define QUEUE_HPP
 
 # include <utility>
 # include <limits>
@@ -21,19 +21,20 @@
 # include "../List/List.hpp"
 # include "../Vector/Vector.hpp"
 # include "../Map/Map.hpp"
-# include "../Queue/Queue.hpp"
+# include "../Stack/Stack.hpp"
+
 
 namespace ft {
 
-    template <typename T, typename Container = Vector<T> >
-	class	Stack {
+    template <typename T, typename Container = List<T> >
+	class	Queue {
 	public:
 		typedef T value_type;
 		typedef Container container_type;
 		typedef size_t size_type;
 
 	private:
-		typedef Stack<T, Container> _Self;
+		typedef Queue<T, Container> _Self;
 
         container_type _cntr;
 		
@@ -41,7 +42,7 @@ namespace ft {
 
 		//construtors
 
-		explicit Stack(const container_type &cntr = container_type()): _cntr(cntr) {
+		explicit Queue(const container_type &cntr = container_type()): _cntr(cntr) {
 		}
 
         //functions
@@ -54,11 +55,19 @@ namespace ft {
             return _cntr.size();
         }
 
-        value_type &top() {
+        value_type &front() {
+            return _cntr.front();
+        }
+
+        const value_type &front() const {
+            return _cntr.front();
+        }
+
+        value_type &back() {
             return _cntr.back();
         }
 
-        const value_type &top() const {
+        const value_type &back() const {
             return _cntr.back();
         }
 
@@ -71,40 +80,40 @@ namespace ft {
         }
 
         template <typename _T, typename _Container>
-		friend bool operator==(const Stack<_T, _Container> &lhs, const Stack<_T, _Container> &rhs);
+		friend bool operator==(const Queue<_T, _Container> &lhs, const Queue<_T, _Container> &rhs);
 
 		template <typename _T, typename _Container>
-		friend bool operator<(const Stack<_T, _Container> &lhs, const Stack<_T, _Container> &rhs);
+		friend bool operator<(const Queue<_T, _Container> &lhs, const Queue<_T, _Container> &rhs);
 
-    }; //stack
+    }; //Queue
 
     template <typename T, typename Container>
-	bool operator==(const Stack<T, Container> &lhs, const Stack<T, Container> &rhs) {
+	bool operator==(const Queue<T, Container> &lhs, const Queue<T, Container> &rhs) {
 		return lhs._cntr == rhs._cntr;
 	}
 
 	template <typename T, typename Container>
-	bool operator!=(const Stack<T, Container> &lhs, const Stack<T, Container> &rhs) {
+	bool operator!=(const Queue<T, Container> &lhs, const Queue<T, Container> &rhs) {
 		return !(lhs == rhs);
 	}
 
 	template <typename T, typename Container>
-	bool operator<(const Stack<T, Container> &lhs, const Stack<T, Container> &rhs) {
+	bool operator<(const Queue<T, Container> &lhs, const Queue<T, Container> &rhs) {
 		return lhs._cntr < rhs._cntr;
 	}
 
 	template <typename T, typename Container>
-	bool operator<=(const Stack<T, Container> &lhs, const Stack<T, Container> &rhs) {
+	bool operator<=(const Queue<T, Container> &lhs, const Queue<T, Container> &rhs) {
 		return !(lhs > rhs);
 	}
 
 	template <typename T, typename Container>
-	bool operator>(const Stack<T, Container> &lhs, const Stack<T, Container> &rhs) {
+	bool operator>(const Queue<T, Container> &lhs, const Queue<T, Container> &rhs) {
 		return rhs < lhs;
 	}
 
 	template <typename T, typename Container>
-	bool operator>=(const Stack<T, Container> &lhs, const Stack<T, Container> &rhs) {
+	bool operator>=(const Queue<T, Container> &lhs, const Queue<T, Container> &rhs) {
 		return !(lhs < rhs);
 	}
     
